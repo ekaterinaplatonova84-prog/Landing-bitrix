@@ -969,7 +969,7 @@
     <div class="cta-inner">
       <h2>Бесплатная консультация — 60 минут</h2>
       <p>Разберём ваши процессы и составим план что настраивать в Битрикс24. Без обязательств.</p>
-      <div class="form">
+      <form class="form" onsubmit="handleSubmit(event)">
         <div class="form-group">
           <label for="name">Ваше имя</label>
           <input type="text" id="name" name="name" placeholder="Иван Иванов" required>
@@ -978,9 +978,9 @@
           <label for="contact">Телефон или Telegram</label>
           <input type="text" id="contact" name="contact" placeholder="+7 (999) 000-00-00 или @username" required>
         </div>
-        <button type="submit" class="form-submit" onclick="handleSubmit(event)">Записаться на консультацию</button>
+        <button type="submit" class="form-submit">Записаться на консультацию</button>
         <p class="form-note">Отвечу в течение часа в рабочее время</p>
-      </div>
+      </form>
     </div>
   </div>
 </section>
@@ -1017,6 +1017,8 @@
 </footer>
 
 <script>
+  const WEBHOOK_URL = 'https://ekaterinaplatonova.bitrix24.ru/rest/1/ihvjhc57s3kbrwqr/crm.lead.add.json';
+
   function handleSubmit(e) {
     e.preventDefault();
     const name = document.getElementById('name').value.trim();
@@ -1025,10 +1027,48 @@
       alert('Пожалуйста, заполните все поля');
       return;
     }
-    // Здесь будет интеграция с Tilda или отправка на email
-    alert('Спасибо, ' + name + '! Свяжусь с вами в течение часа.');
-    document.getElementById('name').value = '';
-    document.getElementById('contact').value = '';
+
+    const submitBtn = document.querySelector('.form-submit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправляю...';
+
+    const fields = {
+      TITLE: 'Заявка с лендинга — ' + name,
+      NAME: name,
+      PHONE: [],
+      COMMENTS: ''
+    };
+
+    if (contact.startsWith('@') || contact.includes('t.me/')) {
+      fields.COMMENTS = 'Telegram: ' + contact;
+    } else if (contact.startsWith('+') || /^\d/.test(contact)) {
+      fields.PHONE = [{ 'VALUE': contact, 'VALUE_TYPE': 'WORK' }];
+    } else {
+      fields.COMMENTS = contact;
+    }
+
+    fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.result) {
+        alert('Спасибо, ' + name + '! Свяжусь с вами в течение часа.');
+        document.getElementById('name').value = '';
+        document.getElementById('contact').value = '';
+      } else {
+        alert('Ошибка при отправке. Попробуйте позже или напишите в Telegram @katyaplato');
+      }
+    })
+    .catch(() => {
+      alert('Ошибка соединения. Попробуйте позже или напишите в Telegram @katyaplato');
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Записаться на консультацию';
+    });
   }
 </script>
 
