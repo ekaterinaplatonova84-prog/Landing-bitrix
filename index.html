@@ -969,7 +969,7 @@
     <div class="cta-inner">
       <h2>Бесплатная консультация — 60 минут</h2>
       <p>Разберём ваши процессы и составим план что настраивать в Битрикс24. Без обязательств.</p>
-      <form class="form" onsubmit="handleSubmit(event)">
+      <div class="form">
         <div class="form-group">
           <label for="name">Ваше имя</label>
           <input type="text" id="name" name="name" placeholder="Иван Иванов" required>
@@ -978,9 +978,9 @@
           <label for="contact">Телефон или Telegram</label>
           <input type="text" id="contact" name="contact" placeholder="+7 (999) 000-00-00 или @username" required>
         </div>
-        <button type="submit" class="form-submit">Записаться на консультацию</button>
+        <button type="button" class="form-submit" onclick="handleSubmit()">Записаться на консультацию</button>
         <p class="form-note">Отвечу в течение часа в рабочее время</p>
-      </form>
+      </div>
     </div>
   </div>
 </section>
@@ -1019,8 +1019,7 @@
 <script>
   const WEBHOOK_URL = 'https://ekaterinaplatonova.bitrix24.ru/rest/1/ihvjhc57s3kbrwqr/crm.lead.add.json';
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleSubmit() {
     const name = document.getElementById('name').value.trim();
     const contact = document.getElementById('contact').value.trim();
     if (!name || !contact) {
