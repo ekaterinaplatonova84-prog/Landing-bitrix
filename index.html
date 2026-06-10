@@ -975,8 +975,8 @@
           <input type="text" id="name" name="name" placeholder="Иван Иванов" required>
         </div>
         <div class="form-group">
-          <label for="contact">Телефон или Telegram</label>
-          <input type="text" id="contact" name="contact" placeholder="+7 (999) 000-00-00 или @username" required>
+          <label for="phone">Телефон или Telegram</label>
+          <input type="text" id="phone" name="phone" placeholder="+7 (999) 000-00-00 или @username" required>
         </div>
         <button type="button" class="form-submit" id="submitBtn">Записаться на консультацию</button>
         <p class="form-note">Отвечу в течение часа в рабочее время</p>
@@ -1020,14 +1020,14 @@
   document.addEventListener('DOMContentLoaded', function() {
     const WEBHOOK_URL = 'https://ekaterinaplatonova.bitrix24.ru/rest/1/ihvjhc57s3kbrwqr/crm.lead.add.json';
     const nameInput = document.getElementById('name');
-    const contactInput = document.getElementById('contact');
+    const phoneInput = document.getElementById('phone');
     const submitBtn = document.getElementById('submitBtn');
 
     if (!submitBtn) return;
 
     submitBtn.addEventListener('click', function() {
       const name = nameInput.value.trim();
-      const contact = contactInput.value.trim();
+      const contact = phoneInput.value.trim();
       if (!name || !contact) {
         alert('Пожалуйста, заполните все поля');
         return;
@@ -1061,7 +1061,7 @@
         if (data.result) {
           alert('Спасибо, ' + name + '! Свяжусь с вами в течение часа.');
           nameInput.value = '';
-          contactInput.value = '';
+          phoneInput.value = '';
         } else {
           alert('Ошибка при отправке. Попробуйте позже или напишите в Telegram @katyaplato');
         }
