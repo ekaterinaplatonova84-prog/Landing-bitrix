@@ -978,7 +978,7 @@
           <label for="contact">Телефон или Telegram</label>
           <input type="text" id="contact" name="contact" placeholder="+7 (999) 000-00-00 или @username" required>
         </div>
-        <button type="button" class="form-submit" onclick="handleSubmit()">Записаться на консультацию</button>
+        <button type="button" class="form-submit" id="submitBtn">Записаться на консультацию</button>
         <p class="form-note">Отвечу в течение часа в рабочее время</p>
       </div>
     </div>
@@ -1017,58 +1017,64 @@
 </footer>
 
 <script>
-  const WEBHOOK_URL = 'https://ekaterinaplatonova.bitrix24.ru/rest/1/ihvjhc57s3kbrwqr/crm.lead.add.json';
+  document.addEventListener('DOMContentLoaded', function() {
+    const WEBHOOK_URL = 'https://ekaterinaplatonova.bitrix24.ru/rest/1/ihvjhc57s3kbrwqr/crm.lead.add.json';
+    const nameInput = document.getElementById('name');
+    const contactInput = document.getElementById('contact');
+    const submitBtn = document.getElementById('submitBtn');
 
-  function handleSubmit() {
-    const name = document.getElementById('name').value.trim();
-    const contact = document.getElementById('contact').value.trim();
-    if (!name || !contact) {
-      alert('Пожалуйста, заполните все поля');
-      return;
-    }
+    if (!submitBtn) return;
 
-    const submitBtn = document.querySelector('.form-submit');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Отправляю...';
-
-    const fields = {
-      TITLE: 'Заявка с лендинга — ' + name,
-      NAME: name,
-      PHONE: [],
-      COMMENTS: ''
-    };
-
-    if (contact.startsWith('@') || contact.includes('t.me/')) {
-      fields.COMMENTS = 'Telegram: ' + contact;
-    } else if (contact.startsWith('+') || /^\d/.test(contact)) {
-      fields.PHONE = [{ 'VALUE': contact, 'VALUE_TYPE': 'WORK' }];
-    } else {
-      fields.COMMENTS = contact;
-    }
-
-    fetch(WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.result) {
-        alert('Спасибо, ' + name + '! Свяжусь с вами в течение часа.');
-        document.getElementById('name').value = '';
-        document.getElementById('contact').value = '';
-      } else {
-        alert('Ошибка при отправке. Попробуйте позже или напишите в Telegram @katyaplato');
+    submitBtn.addEventListener('click', function() {
+      const name = nameInput.value.trim();
+      const contact = contactInput.value.trim();
+      if (!name || !contact) {
+        alert('Пожалуйста, заполните все поля');
+        return;
       }
-    })
-    .catch(() => {
-      alert('Ошибка соединения. Попробуйте позже или напишите в Telegram @katyaplato');
-    })
-    .finally(() => {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Записаться на консультацию';
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправляю...';
+
+      const fields = {
+        TITLE: 'Заявка с лендинга — ' + name,
+        NAME: name,
+        PHONE: [],
+        COMMENTS: ''
+      };
+
+      if (contact.startsWith('@') || contact.includes('t.me/')) {
+        fields.COMMENTS = 'Telegram: ' + contact;
+      } else if (contact.startsWith('+') || /^\d/.test(contact)) {
+        fields.PHONE = [{ 'VALUE': contact, 'VALUE_TYPE': 'WORK' }];
+      } else {
+        fields.COMMENTS = contact;
+      }
+
+      fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.result) {
+          alert('Спасибо, ' + name + '! Свяжусь с вами в течение часа.');
+          nameInput.value = '';
+          contactInput.value = '';
+        } else {
+          alert('Ошибка при отправке. Попробуйте позже или напишите в Telegram @katyaplato');
+        }
+      })
+      .catch(function() {
+        alert('Ошибка соединения. Попробуйте позже или напишите в Telegram @katyaplato');
+      })
+      .finally(function() {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Записаться на консультацию';
+      });
     });
-  }
+  });
 </script>
 
 </body>
