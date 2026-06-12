@@ -635,6 +635,30 @@
     .footer-inner { grid-template-columns: 1fr; gap: 28px; }
     .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
   }
+  .back-to-top {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s, transform 0.2s;
+    z-index: 99;
+    box-shadow: 0 4px 16px rgba(14,165,233,0.3);
+  }
+  .back-to-top.visible { opacity: 1; visibility: visible; }
+  .back-to-top:hover { transform: translateY(-3px); }
+
   @media (max-width: 600px) {
     .hero h1 { font-size: 26px; }
     .section-header h2 { font-size: 24px; }
@@ -645,6 +669,7 @@
     .result-item { flex-direction: column; gap: 8px; }
     .result-num { min-width: auto; font-size: 22px; }
     .hero-actions { flex-direction: column; align-items: flex-start; }
+    .back-to-top { bottom: 20px; right: 20px; width: 40px; height: 40px; font-size: 18px; }
   }
 </style>
 </head>
@@ -1019,6 +1044,13 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    const backBtn = document.getElementById('backToTop');
+    if (backBtn) {
+      window.addEventListener('scroll', function() {
+        backBtn.classList.toggle('visible', window.scrollY > 400);
+      });
+      backBtn.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    }
     const WEBHOOK_URL = 'https://ekaterinaplatonova.bitrix24.ru/rest/1/ihvjhc57s3kbrwqr/crm.lead.add.json';
     const nameInput = document.getElementById('name');
     const phoneInput = document.getElementById('phone');
@@ -1077,6 +1109,8 @@
     });
   });
 </script>
+
+<button class="back-to-top" id="backToTop" aria-label="Наверх">↑</button>
 
 <!-- Bitrix24 chat widget -->
 <script>
