@@ -1043,9 +1043,19 @@
       backBtn.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
     }
     const WEBHOOK_URL = 'https://ekaterinaplatonova.bitrix24.ru/rest/1/ihvjhc57s3kbrwqr/crm.lead.add.json';
+    const TELEGRAM_BOT_TOKEN = 'PASTE_YOUR_BOT_TOKEN_HERE';
+    const TELEGRAM_CHAT_ID = '1135477159';
     const nameInput = document.getElementById('name');
     const phoneInput = document.getElementById('phone');
     const submitBtn = document.getElementById('submitBtn');
+    function notifyTelegram(name, contact) {
+      var text = '🔔 Новая заявка с лендинга\n\nИмя: ' + name + '\nКонтакт: ' + contact;
+      fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text })
+      }).catch(function() {});
+    }
 
     if (!submitBtn) return;
 
@@ -1059,8 +1069,7 @@
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Отправляю...';
-
-      const fields = {
+      notifyTelegram(name, contact);      const fields = {
         TITLE: 'Заявка с лендинга — ' + name,
         NAME: name,
         PHONE: [],
